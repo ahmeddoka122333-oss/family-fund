@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تطبيق جمعية العائلة</title>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --success-color: #2ecc71;
+            --danger-color: #e74c3c;
+            --bg-color: #f4f6f7;
+            --card-bg: #ffffff;
+            --text-color: #333333;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            direction: rtl;
+        }
+
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 20px auto;
+            padding: 0 15px;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        h2 {
+            margin-top: 0;
+            color: var(--primary-color);
+            font-size: 1.3rem;
+            border-bottom: 2px solid var(--bg-color);
+            padding-bottom: 10px;
+        }
+
+        .form-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
+        }
+
+        input, select {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+            flex: 1;
+            min-width: 150px;
+        }
+
+        button {
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background 0.2s;
+        }
+
+        button:hover {
+            opacity: 0.9;
+        }
+
+        .btn-danger {
+            background-color: var(--danger-color);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-box {
+            background: var(--card-bg);
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .stat-box h3 {
+            margin: 0 0 10px 0;
+            font-size: 0.9rem;
+            color: #7f8c8d;
+        }
+
+        .stat-box p {
+            margin: 0;
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: center;
+            border-bottom: 1px solid #eee;
+        }
+
+        th {
+            background-color: var(--primary-color);
+            color: white;
+            font-weight: 500;
+        }
+
+        .checkbox-container {
+            display: inline-block;
+            position: relative;
+            cursor: pointer;
+            font-size: 22px;
+            user-select: none;
+        }
+
+        .checkbox-container input {
+            position: absolute;
+            opacity: 0;
+            cursor: pointer;
+            height: 0;
+            width: 0;
+        }
+
+        .checkmark {
+            position: absolute;
+            top: -12px;
+            right: -12px;
+            height: 25px;
+            width: 25px;
+            background-color: #eee;
+            border-radius: 4px;
+        }
+
+        .checkbox-container input:checked ~ .checkmark {
+            background-color: var(--success-color);
+        }
+
+        .checkmark:after {
+            content: "";
+            position: absolute;
+            display: none;
+        }
+
+        .checkbox-container input:checked ~ .checkmark:after {
+            display: block;
+        }
+
+        .checkbox-container .checkmark:after {
+            left: 9px;
+            top: 5px;
+            width: 5px;
+            height: 10px;
+            border: solid white;
+            border-width: 0 3px 3px 0;
+            transform: rotate(45deg);
+        }
+
+        .actions-cell {
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+        }
+
+        @media (max-width: 600px) {
+            .form-group {
+                flex-direction: column;
+            }
+            input, select, button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>جمعية العائلة</h1>
+        <p>إدارة المشتركين، الأقساط، والمتابعة الشهرية بسهولة وأمان</p>
+    </header>
+
+    <div class="container">
+
+        <!-- الإحصائيات العامة -->
+        <div class="stats-grid">
+            <div class="stat-box">
+                <h3>إجمالي المشتركين</h3>
+                <p id="totalMembers">0</p>
+            </div>
+            <div class="stat-box">
+                <h3>إجمالي المحصل</h3>
+                <p id="totalCollected">0 ج.م</p>
+            </div>
+            <div class="stat-box">
+                <h3>المتبقي حتى الآن</h3>
+                <p id="totalRemaining">0 ج.م</p>
+            </div>
+        </div>
+
+        <!-- إضافة مشترك جديد -->
+        <div class="card">
+            <h2>إضافة مشترك جديد</h2>
+            <div class="form-group">
+                <input type="text" id="memberName" placeholder="اسم المشترك">
+                <input type="number" id="memberShares" placeholder="عدد الأسهم / الحصص" value="1" min="1">
+                <button onclick="addMember()">إضافة المشترك</button>
+            </div>
+        </div>
+
+        <!-- إدارة الشهور والتحكم -->
+        <div class="card">
+            <h2>إدارة الشهور والأقساط</h2>
+            <div class="form-group">
+                <input type="text" id="monthName" placeholder="اسم الشهر (مثال: يناير 2026)">
+                <input type="number" id="monthAmount" placeholder="قيمة السهم الشهرية" value="1000">
+                <button onclick="addMonth()">إضافة شهر جديد</button>
+            </div>
+        </div>
+
+        <!-- جدول الحسابات والمتابعة -->
+        <div class="card">
+            <h2>جدول متابعة الدفعات</h2>
+            <div style="overflow-x: auto;">
+                <table id="fundTable">
+                    <thead>
+                        <tr id="tableHeaderRow">
+                            <th>المشترك</th>
+                            <th>الأسهم</th>
+                            <th>الإجمالي المطلوب</th>
+                            <!-- سيتم إضافة الشهور ديناميكياً هنا -->
+                            <th>الإجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                        <!-- سيتم تعبئة البيانات ديناميكياً هنا -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // هيكل البيانات الأساسي
+        let data = JSON.parse(localStorage.getItem('familyFundData')) || {
+            members: [],
+            months: [],
+            payments: {} // مفتاح: "memberId_monthId", قيمة: true/false
+        };
+
+        function saveData() {
+            localStorage.setItem('familyFundData', JSON.stringify(data));
+            renderApp();
+        }
+
+        function addMember() {
+            const nameInput = document.getElementById('memberName');
+            const sharesInput = document.getElementById('memberShares');
+            
+            const name = nameInput.value.trim();
+            const shares = parseInt(sharesInput.value) || 1;
+
+            if (!name) {
+                alert('الرجاء إدخال اسم المشترك');
+                return;
+            }
+
+            const newMember = {
+                id: 'm_' + Date.now(),
+                name: name,
+                shares: shares
+            };
+
+            data.members.push(newMember);
+            nameInput.value = '';
+            sharesInput.value = '1';
+            saveData();
+        }
+
+        function deleteMember(id) {
+            if (confirm('هل أنت متأكد من حذف هذا المشترك؟')) {
+                data.members = data.members.filter(m => m.id !== id);
+                saveData();
+            }
+        }
+
+        function addMonth() {
+            const monthInput = document.getElementById('monthName');
+            const amountInput = document.getElementById('monthAmount');
+
+            const name = monthInput.value.trim();
+            const amount = parseFloat(amountInput.value) || 0;
+
+            if (!name) {
+                alert('الرجاء إدخال اسم الشهر');
+                return;
+            }
+
+            const newMonth = {
+                id: 'mo_' + Date.now(),
+                name: name,
+                amount: amount
+            };
+
+            data.months.push(newMonth);
+            monthInput.value = '';
+            saveData();
+        }
+
+        function deleteMonth(id) {
+            if (confirm('هل أنت متأكد من حذف هذا الشهر؟')) {
+                data.months = data.months.filter(mo => mo.id !== id);
+                saveData();
+            }
+        }
+
+        function togglePayment(memberId, monthId) {
+            const key = `${memberId}_${monthId}`;
+            data.payments[key] = !data.payments[key];
+            saveData();
+        }
+
+        function renderApp() {
+            const tableHeaderRow = document.getElementById('tableHeaderRow');
+            const tableBody = document.getElementById('tableBody');
+
+            // بناء رأس الجدول (الأعمدة الثابتة + الشهور + الإجراءات)
+            let headerHtml = `
+                <th>المشترك</th>
+                <th>الأسهم</th>
+                <th>الإجمالي المطلوب</th>
+            `;
+
+            data.months.forEach(month => {
+                headerHtml += `<th>${month.name}<br><small style="font-size:0.75rem; font-weight:normal;">(${month.amount} ج.م)</small><br><button onclick="deleteMonth('${month.id}')" style="background:var(--danger-color); padding:2px 5px; font-size:0.7rem; margin-top:3px;">حذف</button></th>`;
+            });
+            headerHtml += `<th>الإجراءات</th>`;
+            tableHeaderRow.innerHTML = headerHtml;
+
+            // بناء محتوى الجدول
+            let bodyHtml = '';
+            let totalCollectedAmount = 0;
+            let totalRequiredAmount = 0;
+
+            data.members.forEach(member => {
+                let memberTotalRequired = 0;
+                let memberTotalPaid = 0;
+
+                data.months.forEach(month => {
+                    const required = member.shares * month.amount;
+                    memberTotalRequired += required;
+                    const key = `${member.id}_${month.id}`;
+                    if (data.payments[key]) {
+                        memberTotalPaid += required;
+                    }
+                });
+
+                totalRequiredAmount += memberTotalRequired;
+                totalCollectedAmount += memberTotalPaid;
+
+                bodyHtml += `<tr>
+                    <td style="font-weight:bold;">${member.name}</td>
+                    <td>${member.shares}</td>
+                    <td>${memberTotalRequired} ج.م</td>
+                `;
+
+                data.months.forEach(month => {
+                    const key = `${member.id}_${month.id}`;
+                    const isChecked = data.payments[key] ? 'checked' : '';
+                    bodyHtml += `
+                        <td>
+                            <label class="checkbox-container">
+                                <input type="checkbox" ${isChecked} onchange="togglePayment('${member.id}', '${month.id}')">
+                                <span class="checkmark"></span>
+                            </label>
+                        </td>
+                    `;
+                });
+
+                bodyHtml += `
+                    <td>
+                        <button class="btn-danger" onclick="deleteMember('${member.id}')" style="padding: 5px 10px; font-size: 0.85rem;">حذف</button>
+                    </td>
+                </tr>`;
+            });
+
+            tableBody.innerHTML = bodyHtml;
+
+            // تحديث الإحصائيات
+            document.getElementById('totalMembers').innerText = data.members.length;
+            document.getElementById('totalCollected').innerText = totalCollectedAmount + ' ج.م';
+            document.getElementById('totalRemaining').innerText = (totalRequiredAmount - totalCollectedAmount) + ' ج.م';
+        }
+
+        // تشغيل التطبيق عند التحميل
+        renderApp();
+    </script>
+</body>
+</html>
